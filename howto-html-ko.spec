@@ -1,24 +1,22 @@
 %define DATE	20040301
-%define    language  Korean
-%define    lang      ko
-%define format1      html-%{lang}
-%define format2      HTML/%{lang}
+%define language Korean
+%define lang	ko
+%define format1	html-%{lang}
+%define format2	HTML/%{lang}
 
-Summary:   %language HOWTO documents (html format) from the Linux Documentation Project
-Name:      howto-%{format1}
+Summary:	%{language} HOWTO documents (html format) from the Linux Documentation Project
+Name:		howto-%{format1}
 Version:	10
-Release:	%mkrel 7
+Release:	7
 Group:		Books/Howtos
-
-Source0:   %name.tar
-
+License:	GPLv2
 Url:		http://www.linuxdoc.org/docs.html#howto
-License:	GPL
-BuildRoot:	%{_tmppath}/%{name}-root
+Source0:	%{name}.tar
 BuildArch:	noarch
 
-BuildRequires: howto-utils
-Requires:    locales-%lang, xdg-utils
+BuildRequires:	howto-utils
+Requires:	locales-%{lang}
+Requires:	xdg-utils
 
 %description
 Linux HOWTOs are detailed documents which describe a specific aspect of 
@@ -27,39 +25,25 @@ practical information about your system.  The latest versions of these
 documents are located at http://www.linuxdoc.org/docs.html#howto
 
 %prep
-%setup -q -n %name
+%setup -qn %{name}
 
 %install
-rm -rf %{buildroot}
 mkdir -p %{buildroot}%{_docdir}/HOWTO/%{format2}
-untar_howtos; makehowtoindex %lang %language > index.html; cp -a * %{buildroot}%{_docdir}/HOWTO/%{format2}
+untar_howtos; makehowtoindex %{lang} %{language} > index.html; cp -a * %{buildroot}%{_docdir}/HOWTO/%{format2}
 
 install -m 755 -d %{buildroot}%{_datadir}/applications
-cat > %{buildroot}%_datadir/applications/mandriva-%{name}.desktop << EOF
+cat > %{buildroot}%{_datadir}/applications/mandriva-%{name}.desktop << EOF
 [Desktop Entry]
-Name=Howto %language
-Comment=HOWTO documents (html format) from the Linux Documentation Project in %language
-Exec=xdg-open %_datadir/doc/HOWTO/HTML/%lang/index.html
+Name=Howto %{language}
+Comment=HOWTO documents (html format) from the Linux Documentation Project in %{language}
+Exec=xdg-open %{_datadir}/doc/HOWTO/HTML/%{lang}/index.html
 Icon=documentation_section
 Terminal=false
 Type=Application
 Categories=Documentation;
 EOF
 
-%clean
-rm -rf %{buildroot}
-
 %files
-%defattr(-,root,root)
 %{_docdir}/HOWTO/%{format2}
 %{_datadir}/applications/*.desktop
 
-%if %mdkversion < 200900
-%post
-%{update_menus}
-%endif
-
-%if %mdkversion < 200900
-%postun
-%{clean_menus}
-%endif
